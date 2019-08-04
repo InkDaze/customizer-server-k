@@ -22,7 +22,7 @@ class PGStrategy {
         this.knex = Knex(config);
     }
 
-    storeShop({ shop, accessToken, data = {} }, done) {
+    storeShop({ shop, accessToken, data = () => void }: {shop: string, accessToken: string, data: any}, done) {
         const uuid = uuidv4();
         this.knex
             .raw(
