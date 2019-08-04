@@ -1,0 +1,33 @@
+{
+  "compileOnSave": true,
+  "compilerOptions": {
+    /* Basic Options */
+    "target": "es6",
+    "module": "commonjs",
+    "lib": [
+      "es2017",
+      "es2015"
+    ],                             /* Specify library files to be included in the compilation. */
+    "allowJs": true,                       /* Allow javascript files to be compiled. */
+    "sourceMap": true,                     /* Generates corresponding '.map' file. */
+    // "outFile": "./",                       /* Concatenate and emit output to single file. */
+    "outDir": "dist",
+    "moduleResolution": "node",
+    /* Redirect output structure to the directory. */
+    "rootDir": "src",                       /* Specify the root directory of input files. Use to control the output directory structure with --outDir. */
+    "skipLibCheck": true,
+    "strict": true,
+    "experimentalDecorators": true        /* Enables experimental support for ES7 decorators. */
+    // "emitDecoratorMetadata": true,         /* Enables experimental support for emitting type metadata for decorators. */
+  },
+  "include": [
+    "server/src/**/*",
+    "./src/**/*"
+  ],
+  "exclude": [
+    "node_modules",
+    "../node_modules",
+    "app/*",
+    "app/**/*"
+  ]
+}

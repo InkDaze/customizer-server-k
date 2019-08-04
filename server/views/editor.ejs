@@ -1,0 +1,142 @@
+<html>
+<head>
+    <title><%= title %></title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" />
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta property="og:type" content="product">
+    <meta property="og:title" content="<%= title %>">
+    <meta property="og:url" content="<%= ogUrl %>">
+    <meta property="og:description" content="Design your custom temporary tattoo with Ink Daze's Design Lab. Add images and text, choose from templates, and more.">
+    <meta property="og:image" content="http://cdn.shopify.com/s/files/1/0004/4063/1357/files/ID-Script-Logo-PINK.png">
+    <meta property="og:image:secure_url" content="https://cdn.shopify.com/s/files/1/0004/4063/1357/files/ID-Script-Logo-PINK.png">
+    <link rel="shortcut icon" href="//cdn.shopify.com/s/files/1/0004/4063/1357/files/ID-Favicon-Pink_32x32.png?v=1520374132" type="image/png">
+    <style type="text/css">
+        .md-spinner {
+            position: relative;
+            display: inline-block;
+            width: 100px;
+            height: 100px;
+            left: calc(50vw - 50px) !important;
+            top: 45vh;
+        }
+        .md-spinner > div {
+            width: 100px;
+            height: 100px;
+            display: inline-block;
+            transition: transform 10s linear 0ms;
+            transform: rotate(1800deg);
+        }
+        #spinner {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+        }
+        body {
+            margin: 0;
+        }
+    </style>
+    <script id="customizer-variables">
+        window.apiKey = "<%= apiKey %>";
+        window.rootURL = "<%= rootURL %>";
+        window.appAuth = "<%= appAuth %>";
+        window.shopOrigin = "https://<%= shop %>";
+        window.appShopAuth = '<%= appShopAuth %>';
+        window.shop_domain = "<%= shop %>";
+        window.page = "<%= page %>";
+        window.products = [];
+        window.customer = <%- customer %>;
+        window.activeProduct = <%- activeProduct %>;
+        document.getElementById("customizer-variables").remove();
+    </script>
+    <script>
+        window.ShopifyAnalytics = window.ShopifyAnalytics || {};
+        window.ShopifyAnalytics.meta = window.ShopifyAnalytics.meta || {};
+        window.ShopifyAnalytics.meta.currency = 'USD';
+        var activeProduct = window.activeProduct;
+        var meta = {
+            "product": {
+                "id": parseInt(activeProduct.product_id),
+                "vendor": activeProduct.vendor,
+                "type": activeProduct.type,
+                "variants": []
+            }, "page": {"pageType": "product", "resourceType": "product", "resourceId": parseInt(activeProduct.product_id)}
+        };
+        activeProduct.variants.forEach(variant => {
+            meta.product.variants.push({
+                id: variant.id,
+                price: parseFloat(variant.price) * 100,
+                name: activeProduct.name + " - " + variant.title,
+                public_title: variant.title,
+                sku: variant.sku
+            })
+        });
+        for (var attr in meta) {
+            window.ShopifyAnalytics.meta[attr] = meta[attr];
+        }
+    </script>
+    <%- include('analytics')  %>
+    <!-- Hotjar Tracking Code for inkdaze.com -->
+    <script>
+        (function(h,o,t,j,a,r){
+            h.hj=h.hj||function(){(h.hj.q=h.hj.q||[]).push(arguments)};
+            h._hjSettings={hjid:817251,hjsv:6};
+            a=o.getElementsByTagName('head')[0];
+            r=o.createElement('script');r.async=1;
+            r.src=t+h._hjSettings.hjid+j+h._hjSettings.hjsv;
+            a.appendChild(r);
+        })(window,document,'https://static.hotjar.com/c/hotjar-','.js?sv=');
+    </script>
+    <script src="//cdn.ravenjs.com/3.24.2/raven.min.js" crossorigin="anonymous"></script>
+</head>
+<body id="editor">
+    <style>
+        #editor #simple-shapes .shapes-list .shape .shape-name:hover {
+            color: <%= JSON.parse(activeProduct).style_options.sidebarHeaderColor %> !important;
+        }
+        #editor #simple-shapes .shapes-list .shape .shape-name, .upload-button-label {
+            color: <%= JSON.parse(activeProduct).style_options.sidebarTextColor %> !important;
+        }
+    </style>
+    <div id="root"></div>
+    <div class="my-bitmoji-stickerpicker-icon-target"></div>
+    <%if (env === "production") { %>
+        <script src="<%= rootURL %>/assets/js/vendor/fabric-test.js?v=0.1" async></script>
+        <script src="<%= rootURL %>/build/style.js" async></script>
+    <% }  else { %>
+        <script src="<%= rootURL %>/assets/js/vendor/fabric.js" async></script>
+        <script src="<%= rootURL %>/assets/style.js" async></script>
+    <% } %>
+    <script src="<%= scriptSrc %>?v=<%= version %>" async></script>
+    <script>
+        window.snapKitInit = function () {
+            // Argument 1
+            let bitmojiWebPickerIconClass = 'my-bitmoji-stickerpicker-icon-target';
+            // Argument 2
+            let uiOptions = {
+                onStickerPickCallback:
+                    function onStickerPickCallback(bitmojiImgURL) {
+                        console.log(bitmojiImgURL);
+                    },
+                webpickerPosition: 'bottomRight',
+            };
+
+            // Argument 3
+            let loginParamsObj = {
+                clientId: 'f5c1fbd3-ac0f-4502-b317-612dd54035be',
+                redirectURI: window.location.href,
+                scopeList: [ // the list of scopes you are approved for
+                    'user.bitmoji.avatar',
+                    'user.display_name',
+                ],
+            };
+            snap.bitmojikit.mountBitmojiStickerPickerIcons(
+                bitmojiWebPickerIconClass,
+                uiOptions,
+                loginParamsObj,
+            );
+        }
+    </script>
+    <script src="https://sdk.snapkit.com/js/v1/login_bitmoji.js" defer type="text/javascript"></script>
+  </body>
+</html>

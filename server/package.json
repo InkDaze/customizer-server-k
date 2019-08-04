@@ -1,0 +1,35 @@
+{
+  "name": "customizer-server",
+  "version": "1.0.0",
+  "description": "Server for customizer app",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Parker Self",
+  "license": "ISC",
+  "dependencies": {
+    "cloudinary": "^1.13.2",
+    "compression": "^1.7.3",
+    "connect-redis": "^3.4.0",
+    "cors": "^2.8.5",
+    "dotenv": "^6.2.0",
+    "express": "^4.16.4",
+    "express-session": "^1.15.6",
+    "isomorphic-fetch": "^2.2.1",
+    "jsonwebtoken": "^8.4.0",
+    "knex": "^0.16.3",
+    "md5": "^2.2.1",
+    "morgan": "^1.9.1",
+    "path": "^0.12.7",
+    "pg": "^7.8.0",
+    "request-promise": "^4.2.4",
+    "shopify-api-node": "^2.18.1",
+    "uuid": "^3.3.2"
+  },
+  "devDependencies": {
+    "@types/pg": "^7.4.13",
+    "@types/uuid": "^3.4.4",
+    "typescript": "^3.3.3"
+  }
+}

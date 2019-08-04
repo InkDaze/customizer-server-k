@@ -1,0 +1,163 @@
+<script>
+    (function () {
+        var customDocumentWrite = function(content) {
+            var jquery = null;
+
+            if (window.jQuery) {
+                jquery = window.jQuery;
+            } else if (window.Checkout && window.Checkout.$) {
+                jquery = window.Checkout.$;
+            }
+
+            if (jquery) {
+                jquery('body').append(content);
+            }
+        };
+
+        var trekkie = window.ShopifyAnalytics.lib = window.trekkie = window.trekkie || [];
+        if (trekkie.integrations) {
+            return;
+        }
+        trekkie.methods = [
+            'identify',
+            'page',
+            'ready',
+            'track',
+            'trackForm',
+            'trackLink'
+        ];
+        trekkie.factory = function(method) {
+            return function() {
+                var args = Array.prototype.slice.call(arguments);
+                args.unshift(method);
+                trekkie.push(args);
+                return trekkie;
+            };
+        };
+        for (var i = 0; i < trekkie.methods.length; i++) {
+            var key = trekkie.methods[i];
+            trekkie[key] = trekkie.factory(key);
+        }
+        trekkie.load = function(config) {
+            trekkie.config = config;
+            var script = document.createElement('script');
+            script.type = 'text/javascript';
+            script.onerror = function(e) {
+                (new Image()).src = '//v.shopify.com/internal_errors/track?error=trekkie_load';
+            };
+            script.async = true;
+            script.src = 'https://cdn.shopify.com/s/javascripts/tricorder/trekkie.storefront.min.js?v=2017.09.05.1';
+            var first = document.getElementsByTagName('script')[0];
+            first.parentNode.insertBefore(script, first);
+        };
+        trekkie.load(
+            {
+                "Trekkie": {
+                    "appName": "storefront",
+                    "development": false,
+                    "defaultAttributes": {
+                        "shopId": 440631357,
+                        "isMerchantRequest": true,
+                        "themeId": 11243716669,
+                        "themeCityHash": 4670705311574430432
+                    }
+                },
+                "Performance": {
+                    "navigationTimingApiMeasurementsEnabled": true,
+                    "navigationTimingApiMeasurementsSampleRate": 1.0
+                },
+                "Google Analytics": {
+                    "trackingId": "UA-114818004-1",
+                    "domain": "auto",
+                    "siteSpeedSampleRate": "10",
+                    "enhancedEcommerce": true,
+                    "doubleClick": true,
+                    "includeSearch": true
+                },
+                "Facebook Pixel": {"pixelIds": ["338584899971534"], "agent": "plshopify1.2"},
+                "Session Attribution": {}
+            }
+        );
+
+        var loaded = false;
+        trekkie.ready(function() {
+            if (loaded) return;
+            loaded = true;
+
+            window.ShopifyAnalytics.lib = window.trekkie;
+
+            ga('require', 'linker');
+            function addListener(element, type, callback) {
+                if (element.addEventListener) {
+                    element.addEventListener(type, callback);
+                }
+                else if (element.attachEvent) {
+                    element.attachEvent('on' + type, callback);
+                }
+            }
+            function decorate(event) {
+                event = event || window.event;
+                var target = event.target || event.srcElement;
+                if (target && (target.getAttribute('action') || target.getAttribute('href'))) {
+                    ga(function (tracker) {
+                        var linkerParam = tracker.get('linkerParam');
+                        document.cookie = '_shopify_ga=' + linkerParam + '; ' + 'path=/';
+                    });
+                }
+            }
+            addListener(window, 'load', function(){
+                for (var i=0; i < document.forms.length; i++) {
+                    var action = document.forms[i].getAttribute('action');
+                    if(action && action.indexOf('/cart') >= 0) {
+                        addListener(document.forms[i], 'submit', decorate);
+                    }
+                }
+                for (var i=0; i < document.links.length; i++) {
+                    var href = document.links[i].getAttribute('href');
+                    if(href && href.indexOf('/checkout') >= 0) {
+                        addListener(document.links[i], 'click', decorate);
+                    }
+                }
+            });
+
+
+            var originalDocumentWrite = document.write;
+            document.write = customDocumentWrite;
+            try { window.ShopifyAnalytics.merchantGoogleAnalytics.call(this); } catch(error) {};
+            document.write = originalDocumentWrite;
+
+
+            window.ShopifyAnalytics.lib.page(
+                null,
+                window.ShopifyAnalytics.meta.page
+            );
+            var activeProduct = window.activeProduct,
+                variant = activeProduct.variants[activeProduct.selectedVariant];
+
+            var analyticsProduct = {
+                brand: "Custom",
+                category: activeProduct.type,
+                currency: "USD",
+                name: activeProduct.name,
+                pageType: "product",
+                price: parseFloat(variant.price),
+                productId: activeProduct.product_id,
+                resourceId: activeProduct.product_id,
+                resourceType: "product",
+                sku: activeProduct.product_id,
+                variant: variant.title,
+                variantId: variant.id,
+                "nonInteraction":true
+            };
+            window.ShopifyAnalytics.lib.track(
+                "Viewed Product",
+                analyticsProduct
+            );
+        });
+
+        let eventsListenerScript = document.createElement('script');
+        eventsListenerScript.async = true;
+        eventsListenerScript.src = "//cdn.shopify.com/s/assets/shop_events_listener-f2c5800305098f0ebebdfa7d980c9abf56514c46d5305e97a7c476f7c9116163.js";
+        document.getElementsByTagName('head')[0].appendChild(eventsListenerScript);
+    })();
+</script>
